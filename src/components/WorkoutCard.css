@@ -1,0 +1,87 @@
+.workout-card {
+    padding: 20px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.workout-card:active {
+    transform: scale(0.98);
+}
+
+.category-tag {
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+    display: block;
+}
+
+.workout-card h3 {
+    font-size: 1.25rem;
+    color: #fff;
+}
+
+.description {
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.technique-box {
+    background: rgba(80, 200, 120, 0.05);
+    border-left: 2px solid var(--emerald);
+    padding: 12px;
+    border-radius: 4px 12px 12px 4px;
+}
+
+.technique-box .label {
+    font-size: 0.65rem;
+    font-weight: 900;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.technique-box p {
+    font-size: 0.85rem;
+    line-height: 1.4;
+    color: #f0f0f0;
+}
+
+.card-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.card-actions button {
+    height: 48px;
+    padding: 0 16px;
+    border-radius: 12px;
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    color: var(--text-primary);
+    font-weight: 700;
+    font-size: 0.7rem;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-secondary:active:not(:disabled) {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.btn-secondary:disabled {
+    background: var(--emerald);
+    border-color: var(--emerald);
+    color: #000;
+    opacity: 0.8;
+}

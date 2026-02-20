@@ -1,0 +1,113 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --emerald: #50C878;
+  --emerald-muted: rgba(80, 200, 120, 0.2);
+  --bg-dark: #0a0a0a;
+  --bg-card: #141414;
+  --bg-nav: rgba(20, 20, 20, 0.85);
+  --text-primary: #ffffff;
+  --text-secondary: #999999;
+  --glass: rgba(255, 255, 255, 0.03);
+  /* More subtle tint */
+  --glass-border: rgba(255, 255, 255, 0.08);
+  /* Finer border */
+  --shadow-emerald: 0 0 20px rgba(80, 200, 120, 0.15);
+
+  --safe-area-bottom: env(safe-area-inset-bottom, 20px);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  /* Prevent accidental text selection on mobile */
+}
+
+html,
+body {
+  overscroll-behavior-y: none;
+  /* Disable pull-to-refresh */
+  height: 100%;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-dark);
+  color: var(--text-primary);
+  line-height: 1.5;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Typography Utilities */
+h1,
+h2,
+h3 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.text-emerald {
+  color: var(--emerald);
+}
+
+.text-muted {
+  color: var(--text-secondary);
+}
+
+/* Glassmorphism Classes */
+.glass {
+  background: var(--glass);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--glass-border);
+}
+
+/* Base Layout Container */
+#root {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  /* Main container fixed, scroll handled inside */
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: var(--emerald);
+  color: #000;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-transform: uppercase;
+}
+
+.btn-primary:active {
+  transform: scale(0.96);
+  opacity: 0.9;
+}
+
+/* Custom Scrollbar for Library */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--glass-border);
+  border-radius: 10px;
+}
