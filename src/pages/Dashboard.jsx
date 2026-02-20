@@ -5,10 +5,16 @@ import { WORKOUT_DATA } from '../constants/workouts';
 import './Dashboard.css';
 
 const Dashboard = () => {
-    const { completedWorkouts, readinessData, deleteWorkout, weeklyStats, logWorkout, toggleWorkoutStatus } = useWorkouts();
+    const { completedWorkouts, readinessData, deleteWorkout, weeklyStats, logWorkout, toggleWorkoutStatus, saveDay, unsaveDay, savedDays } = useWorkouts();
     const [showCheckIn, setShowCheckIn] = useState(false);
     const [selectedWorkout, setSelectedWorkout] = useState(null);
     const [deletingId, setDeletingId] = useState(null);
+    const [confirmSaveDay, setConfirmSaveDay] = useState(false);
+    const [confirmUnsaveDay, setConfirmUnsaveDay] = useState(false);
+
+    // Library Picker State
+    const [isPickerOpen, setIsPickerOpen] = useState(false);
+    const [pickerSearch, setPickerSearch] = useState('');
 
     const score = readinessData.currentScore;
     const [animatedScore, setAnimatedScore] = useState(0);
@@ -39,6 +45,24 @@ const Dashboard = () => {
 
         requestAnimationFrame(animate);
     }, [score]);
+
+    const filteredLibrary = WORKOUT_DATA.filter(w =>
+        w.title.toLowerCase().includes(pickerSearch.toLowerCase()) ||
+        w.category.toLowerCase().includes(pickerSearch.toLowerCase())
+    );
+
+    const addWorkoutFromLibrary = (workout) => {
+        const newW = {
+            title: workout.title,
+            category: workout.category,
+            // time can just be "Scheduled" or similar if we don't have one
+            time: 'Scheduled'
+        };
+        // logWorkout defaults to completed=false, but we could set it if we wanted.
+        logWorkout(newW, false);
+        setIsPickerOpen(false);
+        setPickerSearch('');
+    };
 
     const getZoneClass = () => {
         if (score >= 70) return 'zone-emerald';
@@ -114,7 +138,7 @@ const Dashboard = () => {
 
             {selectedWorkout && (
                 <div className="readiness-overlay glass animate-in" onClick={() => setSelectedWorkout(null)}>
-                    <div className="readiness-modal glass workout-detail-modal" onClick={e => e.stopPropagation()}>
+                    <div className="readiness-modal workout-detail-modal" onClick={e => e.stopPropagation()}>
                         <div className="modal-header">
                             <span className="tag text-emerald">{selectedWorkout.category}</span>
                             <button className="close-btn" onClick={() => setSelectedWorkout(null)}>×</button>
@@ -278,6 +302,82 @@ const Dashboard = () => {
                             </div>
                         )) : (
                             <p className="text-muted empty-state">No activities completed today yet.</p>
+                        )}
+                        <div className="add-activity-container" style={{ marginTop: '16px' }}>
+                            {!isPickerOpen ? (
+                                <button className="browse-library-btn glass" style={{ width: '100%' }} onClick={() => setIsPickerOpen(true)}>
+                                    + ADD FROM LIBRARY
+                                </button>
+                            ) : (
+                                <div className="library-picker glass animate-in" style={{ position: 'relative', marginTop: '8px' }}>
+                                    <div className="picker-header">
+                                        <input
+                                            type="text"
+                                            placeholder="Search library..."
+                                            value={pickerSearch}
+                                            onChange={(e) => setPickerSearch(e.target.value)}
+                                            autoFocus
+                                        />
+                                        <button className="close-picker" onClick={() => setIsPickerOpen(false)}>×</button>
+                                    </div>
+                                    <div className="picker-results scrollable" style={{ maxHeight: '200px' }}>
+                                        {filteredLibrary.map((w, idx) => (
+                                            <div key={idx} className="picker-item" onClick={() => addWorkoutFromLibrary(w)}>
+                                                <span className="item-title">{w.title}</span>
+                                                <span className="item-cat">{w.category}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                        {savedDays.includes(todayStr) ? (
+                            <button
+                                className={`btn-primary ${confirmUnsaveDay ? 'confirming' : ''}`}
+                                style={{
+                                    marginTop: '16px',
+                                    width: '100%',
+                                    backgroundColor: confirmUnsaveDay ? 'var(--alert-red)' : 'transparent',
+                                    color: confirmUnsaveDay ? 'white' : 'var(--text-secondary)',
+                                    border: confirmUnsaveDay ? 'none' : '1px solid var(--border-color)',
+                                    transition: 'all 0.2s ease'
+                                }}
+                                onClick={() => {
+                                    if (confirmUnsaveDay) {
+                                        unsaveDay();
+                                        setConfirmUnsaveDay(false);
+                                    } else {
+                                        setConfirmUnsaveDay(true);
+                                        // Reset confirmation after 3 seconds
+                                        setTimeout(() => setConfirmUnsaveDay(false), 3000);
+                                    }
+                                }}
+                            >
+                                {confirmUnsaveDay ? "CONFIRM UNSAVE?" : "UNSAVE DAY TO EDIT"}
+                            </button>
+                        ) : (
+                            <button
+                                className={`btn-primary ${confirmSaveDay ? 'confirming' : ''}`}
+                                style={{
+                                    marginTop: '16px',
+                                    width: '100%',
+                                    backgroundColor: confirmSaveDay ? 'var(--alert-red)' : 'var(--emerald)',
+                                    color: 'black',
+                                    transition: 'all 0.2s ease'
+                                }}
+                                onClick={() => {
+                                    if (confirmSaveDay) {
+                                        saveDay();
+                                        setConfirmSaveDay(false);
+                                    } else {
+                                        setConfirmSaveDay(true);
+                                        // Reset confirmation after 3 seconds
+                                        setTimeout(() => setConfirmSaveDay(false), 3000);
+                                    }
+                                }}
+                            >
+                                {confirmSaveDay ? "CONFIRM SAVE?" : "SAVE MY DAY"}
+                            </button>
                         )}
                     </div>
                 </section>

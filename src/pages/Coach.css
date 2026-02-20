@@ -4,6 +4,7 @@
     height: calc(100vh - 170px);
     /* Adjust for header and nav */
     position: relative;
+    padding-top: 20px;
 }
 
 .chat-container {

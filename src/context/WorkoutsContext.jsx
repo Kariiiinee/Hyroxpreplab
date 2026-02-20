@@ -5,10 +5,7 @@ const WorkoutsContext = createContext();
 export const WorkoutsProvider = ({ children }) => {
     const [completedWorkouts, setCompletedWorkouts] = useState(() => {
         const saved = localStorage.getItem('hyrox_completed_workouts');
-        const data = saved ? JSON.parse(saved) : [
-            { id: 1, title: "1000m SkiErg", category: "Race Stations", time: "06:30 AM", date: new Date().toLocaleDateString(), completed: true },
-            { id: 2, title: "Zone 2 Run", category: "Endurance", time: "07:15 AM", date: new Date().toLocaleDateString(), completed: true }
-        ];
+        const data = saved ? JSON.parse(saved) : [];
         // Migration: Ensure all old workouts have a completed status
         return data.map(w => ({ ...w, completed: w.completed !== undefined ? w.completed : true }));
     });
@@ -16,18 +13,18 @@ export const WorkoutsProvider = ({ children }) => {
     const [readinessData, setReadinessData] = useState(() => {
         const saved = localStorage.getItem('hyrox_readiness_data');
         return saved ? JSON.parse(saved) : {
-            currentScore: 85,
-            lastUpdated: new Date().toLocaleDateString(),
+            currentScore: 0,
+            lastUpdated: null,
             history: [], // For baseline calculation
-            streak: 3
+            streak: 0
         };
     });
 
     const [stats, setStats] = useState({
-        hrv: 72,
-        sleep: 8.5,
-        runningVolume: 42.5, // Total km for the week
-        pftScore: 'A+'
+        hrv: 0,
+        sleep: 0,
+        runningVolume: 0, // Total km for the week
+        pftScore: '-'
     });
 
     useEffect(() => {
@@ -37,6 +34,27 @@ export const WorkoutsProvider = ({ children }) => {
     useEffect(() => {
         localStorage.setItem('hyrox_readiness_data', JSON.stringify(readinessData));
     }, [readinessData]);
+
+    const [savedDays, setSavedDays] = useState(() => {
+        const saved = localStorage.getItem('hyrox_saved_days');
+        return saved ? JSON.parse(saved) : [];
+    });
+
+    useEffect(() => {
+        localStorage.setItem('hyrox_saved_days', JSON.stringify(savedDays));
+    }, [savedDays]);
+
+    const saveDay = () => {
+        const todayStr = new Date().toLocaleDateString();
+        if (!savedDays.includes(todayStr)) {
+            setSavedDays(prev => [...prev, todayStr]);
+        }
+    };
+
+    const unsaveDay = () => {
+        const todayStr = new Date().toLocaleDateString();
+        setSavedDays(prev => prev.filter(day => day !== todayStr));
+    };
 
     const calculateReadiness = (input) => {
         // 1. Normalization (0-100)
@@ -134,7 +152,10 @@ export const WorkoutsProvider = ({ children }) => {
             readinessData,
             calculateReadiness,
             stats,
-            weeklyStats: getWeeklyStats()
+            weeklyStats: getWeeklyStats(),
+            savedDays,
+            saveDay,
+            unsaveDay
         }}>
             {children}
         </WorkoutsContext.Provider>

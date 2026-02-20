@@ -3,6 +3,7 @@
 :root {
   --emerald: #50C878;
   --emerald-muted: rgba(80, 200, 120, 0.2);
+  --alert-red: #ff453a;
   --bg-dark: #0a0a0a;
   --bg-card: #141414;
   --bg-nav: rgba(20, 20, 20, 0.85);

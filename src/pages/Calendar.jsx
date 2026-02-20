@@ -4,51 +4,59 @@ import { WORKOUT_DATA } from '../constants/workouts';
 import './Calendar.css';
 
 const Calendar = () => {
-    const { readinessHistory, dailyActivities } = useWorkouts();
+    const { completedWorkouts, readinessData, savedDays = [] } = useWorkouts();
     const [view, setView] = useState('weekly'); // 'weekly' or 'monthly'
     const [currentDate, setCurrentDate] = useState(new Date());
     const [selectedDay, setSelectedDay] = useState(null);
     const [isPickerOpen, setIsPickerOpen] = useState(false);
     const [pickerSearch, setPickerSearch] = useState('');
 
-    const [weekData, setWeekData] = useState([
-        {
-            id: 1, day: 'Mon', date: '17', readiness: 85, sessions: 2, balance: 0.6, workouts: [
-                { id: 'm1', title: 'HYROX PFT', category: 'Race Workouts', time: '45 min', completed: true },
-                { id: 'm2', title: 'Base Run', category: 'Endurance', time: '30 min', completed: true }
-            ], notes: 'Legs felt fresh. Strong finish.', isRestDay: false
-        },
-        {
-            id: 2, day: 'Tue', date: '18', readiness: 45, sessions: 1, balance: 0.3, workouts: [
-                { id: 't1', title: 'Strength Protocol', category: 'Strength', time: '50 min', completed: true }
-            ], notes: 'Low sleep, heart rate high today.', isRestDay: false
-        },
-        {
-            id: 3, day: 'Wed', date: '19', readiness: 92, sessions: 3, balance: 0.8, workouts: [
-                { id: 'w1', title: 'Power Clusters', category: 'Power', time: '40 min', completed: true },
-                { id: 'w2', title: 'Zone 2 Bike', category: 'Endurance', time: '45 min', completed: true },
-                { id: 'w3', title: 'Mobility', category: 'Recovery', time: '20 min', completed: true }
-            ], notes: 'Excellent recovery session.', isRestDay: false
-        },
-        {
-            id: 4, day: 'Thu', date: '20', readiness: 78, sessions: 2, balance: 0.5, workouts: [
-                { id: 'th1', title: 'Burpee Intervals', category: 'Race Workouts', time: '35 min', completed: true },
-                { id: 'th2', title: 'Heavy Sled Pull', category: 'Strength', time: '20 min', completed: true }
-            ], isRestDay: false
-        },
-        {
-            id: 5, day: 'Fri', date: '21', readiness: 65, sessions: 1, balance: 0.4, workouts: [
-                { id: 'f1', title: 'Progressive Run', category: 'Endurance', time: '40 min', completed: true }
-            ], isRestDay: false
-        },
-        {
-            id: 6, day: 'Sat', date: '22', readiness: 88, sessions: 2, balance: 0.7, workouts: [
-                { id: 's1', title: 'Simulation 1', category: 'Race Workouts', time: '60 min', completed: true },
-                { id: 's2', title: 'Core Stability', category: 'Strength', time: '20 min', completed: true }
-            ], isRestDay: false
-        },
-        { id: 7, day: 'Sun', date: '23', readiness: 95, sessions: 0, balance: 0.0, workouts: [], isRestDay: true },
-    ]);
+    const [weekData, setWeekData] = useState([]);
+
+    React.useEffect(() => {
+        const today = new Date();
+        const startOfWeek = new Date(today);
+        startOfWeek.setDate(today.getDate() - today.getDay() + (today.getDay() === 0 ? -6 : 1)); // Monday
+
+        const generatedDays = [];
+        for (let i = 0; i < 7; i++) {
+            const date = new Date(startOfWeek);
+            date.setDate(startOfWeek.getDate() + i);
+            const dateStr = date.toLocaleDateString();
+
+            const isSaved = savedDays.includes(dateStr);
+            const dayWorkouts = isSaved ? completedWorkouts.filter(w => w.date === dateStr && w.completed) : [];
+
+            let readiness = 100;
+            dayWorkouts.forEach(w => {
+                if (w.category === 'Race Workouts') readiness -= 15;
+                else if (['Strength', 'Power'].includes(w.category)) readiness -= 10;
+                else if (w.category === 'Endurance') readiness -= 8;
+                else if (w.category === 'Recovery') readiness += 5;
+            });
+            readiness = Math.max(0, Math.min(100, readiness));
+
+            if (dateStr === today.toLocaleDateString() && readinessData?.currentScore > 0) {
+                readiness = readinessData.currentScore;
+            }
+
+            const sWorkouts = dayWorkouts.filter(w => ['Strength', 'Power', 'Race Workouts'].includes(w.category)).length;
+            const balance = dayWorkouts.length > 0 ? sWorkouts / dayWorkouts.length : 0;
+
+            generatedDays.push({
+                id: i + 1,
+                day: date.toLocaleDateString('en-US', { weekday: 'short' }),
+                date: date.getDate().toString(),
+                fullDate: dateStr,
+                readiness: isSaved && dayWorkouts.length > 0 ? readiness : null,
+                sessions: dayWorkouts.length,
+                balance: balance,
+                workouts: dayWorkouts,
+                isRestDay: false
+            });
+        }
+        setWeekData(generatedDays);
+    }, [completedWorkouts, readinessData, savedDays]);
 
     const [viewDate, setViewDate] = useState(new Date(2026, 1, 1)); // Default Feb 2026
 
@@ -65,26 +73,41 @@ const Calendar = () => {
 
         const days = [];
         for (let i = 1; i <= daysInMonth; i++) {
-            // Check if this date is in our current weekData (Feb 17-23)
-            const weekMatch = weekData.find(wd => wd.date === i.toString() && month === 1 && year === 2026);
+            const currentIterDate = new Date(year, month, i);
+            const dateStr = currentIterDate.toLocaleDateString();
 
-            if (weekMatch) {
+            const isSaved = savedDays.includes(dateStr);
+            const dayWorkouts = isSaved ? completedWorkouts.filter(w => w.date === dateStr && w.completed) : [];
+
+            if (dayWorkouts.length > 0) {
+                let readiness = 100;
+                dayWorkouts.forEach(w => {
+                    if (w.category === 'Race Workouts') readiness -= 15;
+                    else if (['Strength', 'Power'].includes(w.category)) readiness -= 10;
+                    else if (w.category === 'Endurance') readiness -= 8;
+                    else if (w.category === 'Recovery') readiness += 5;
+                });
+                readiness = Math.max(0, Math.min(100, readiness));
+
+                // Use actual score if it's today
+                if (dateStr === new Date().toLocaleDateString() && readinessData?.currentScore > 0) {
+                    readiness = readinessData.currentScore;
+                }
+
                 days.push({
                     date: i,
-                    readiness: weekMatch.readiness,
-                    intensity: weekMatch.workouts.length * 0.3,
-                    isActive: weekMatch.workouts.length > 0,
-                    workouts: weekMatch.workouts
+                    readiness: readiness,
+                    intensity: dayWorkouts.length * 0.3,
+                    isActive: true,
+                    workouts: dayWorkouts
                 });
             } else {
-                // Simulated data for others
-                const isActive = (i + month) % 3 === 0;
                 days.push({
                     date: i,
-                    readiness: isActive ? 70 : 50,
-                    intensity: isActive ? 0.5 : 0.1,
-                    isActive,
-                    workouts: isActive ? [{}, {}] : []
+                    readiness: null,
+                    intensity: 0,
+                    isActive: false,
+                    workouts: []
                 });
             }
         }
@@ -327,17 +350,17 @@ const Calendar = () => {
                 <div className="weekly-summary glass">
                     <div className="summary-item">
                         <span className="label">SESSIONS</span>
-                        <span className="val">11</span>
+                        <span className="val">{completedWorkouts.filter(w => w.completed).length}</span>
                     </div>
                     <div className="summary-divider"></div>
                     <div className="summary-item">
                         <span className="label">AVG READY</span>
-                        <span className="val text-emerald">78%</span>
+                        <span className="val text-emerald">{readinessData?.currentScore || 0}%</span>
                     </div>
                     <div className="summary-divider"></div>
                     <div className="summary-item">
                         <span className="label">STREAK</span>
-                        <span className="val">6d</span>
+                        <span className="val">{readinessData?.streak || 0}d</span>
                     </div>
                 </div>
             </header>
