@@ -24,11 +24,13 @@ const Library = () => {
         const safeTitle = w.title || '';
         const safeDesc = w.description || '';
         const safeTech = w.technique || '';
+        const safeAlt = w.calisthenicsAlternative || '';
         const q = searchQuery.toLowerCase();
 
         const matchesSearch = safeTitle.toLowerCase().includes(q) ||
             safeDesc.toLowerCase().includes(q) ||
-            safeTech.toLowerCase().includes(q);
+            safeTech.toLowerCase().includes(q) ||
+            safeAlt.toLowerCase().includes(q);
 
         return matchesFilter && matchesSearch;
     });

@@ -3,7 +3,7 @@ import { useWorkouts } from '../context/WorkoutsContext';
 import './WorkoutCard.css';
 
 const WorkoutCard = ({ workout }) => {
-    const { title, category, description, technique } = workout;
+    const { title, category, description, technique, calisthenicsAlternative } = workout;
     const { logWorkout } = useWorkouts();
     const [isLogged, setIsLogged] = useState(false);
 
@@ -24,6 +24,12 @@ const WorkoutCard = ({ workout }) => {
                 <div className="technique-box">
                     <span className="label text-emerald">PRO TIP:</span>
                     <p>{technique}</p>
+                </div>
+            )}
+            {calisthenicsAlternative && (
+                <div className="technique-box calisthenics-box" style={{ marginTop: '12px' }}>
+                    <span className="label text-emerald">CALISTHENICS OR NO GYM ALTERNATIVE:</span>
+                    <p>{calisthenicsAlternative}</p>
                 </div>
             )}
             <div className="card-actions">

@@ -129,52 +129,284 @@ const Dashboard = () => {
     };
 
     return (
-        <div className="dashboard-page animate-in">
-            <section className="dashboard-hero animate-in">
+        <>
+            <div className="dashboard-page animate-in">
+                <section className="dashboard-hero animate-in">
 
-                <h1 className="hero-title" style={{ textAlign: 'center' }}>
-                    Training for <span className="text-gradient">HYROX</span>
-                </h1>
+                    <h1 className="hero-title" style={{ textAlign: 'center' }}>
+                        Training for <span className="text-gradient">HYROX</span>
+                    </h1>
 
-                <div className="hero-image-container">
-                    <img src={heroImage} alt="Hyrox Training" className="hero-image" />
-                </div>
+                    <div className="hero-image-container">
+                        <img src={heroImage} alt="Hyrox Training" className="hero-image" />
+                    </div>
 
-                <div className="hero-content">
-                    <p className="hero-challenge">
-                        It's unique because you are trying to build two things that usually fight each other: <strong className="text-primary">massive strength</strong> and <strong className="text-primary">long-distance running endurance</strong>.
-                    </p>
+                    <div className="hero-content">
+                        <p className="hero-challenge">
+                            It's unique because you are trying to build two things that usually fight each other: <strong className="text-primary">massive strength</strong> and <strong className="text-primary">long-distance running endurance</strong>.
+                        </p>
 
-                    <div className="hero-solution glass-panel">
-                        <p>
-                            Stop guessing your training. We give you structured workouts, daily readiness insights, and an AI Coach that adapts to your fitness so every session builds real performance.
+                        <div className="hero-solution glass-panel">
+                            <p>
+                                Stop guessing your training. We give you structured workouts, daily readiness insights, and an AI Coach that adapts to your fitness so every session builds real performance.
+                            </p>
+                        </div>
+
+                        <div className="hero-benefits">
+                            <span className="benefit-item">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="var(--emerald)"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" /></svg>
+                                Train with purpose
+                            </span>
+                            <span className="benefit-item">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="var(--emerald)"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" /></svg>
+                                Recover smarter
+                            </span>
+                            <span className="benefit-item">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="var(--emerald)"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" /></svg>
+                                Show up ready
+                            </span>
+                        </div>
+
+                        <p className="hero-footer-text text-muted">
+                            Your plan evolves with you — so you always know what to do today and why it matters.
                         </p>
                     </div>
 
-                    <div className="hero-benefits">
-                        <span className="benefit-item">
-                            <svg viewBox="0 0 24 24" width="16" height="16" fill="var(--emerald)"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" /></svg>
-                            Train with purpose
-                        </span>
-                        <span className="benefit-item">
-                            <svg viewBox="0 0 24 24" width="16" height="16" fill="var(--emerald)"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" /></svg>
-                            Recover smarter
-                        </span>
-                        <span className="benefit-item">
-                            <svg viewBox="0 0 24 24" width="16" height="16" fill="var(--emerald)"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" /></svg>
-                            Show up ready
-                        </span>
+                    <div className="hero-bottom-highlight">
+                        <p className="hero-subtitle text-emerald">YOUR PREPARATION. OPTIMIZED.</p>
                     </div>
+                </section>
 
-                    <p className="hero-footer-text text-muted">
-                        Your plan evolves with you — so you always know what to do today and why it matters.
+                <div className={`readiness-section ${getZoneClass()}`}>
+                    <div className="readiness-text">
+                        <h2>DAILY READINESS</h2>
+                        <p className="text-muted" style={{ fontSize: '0.85rem', maxWidth: '90%', margin: '0 auto 16px auto', lineHeight: '1.4' }}>
+                            Your Daily Readiness score combines various factors including your sleep, recovery, energy, stress inputs etc to estimate how prepared your body is to train today.
+                        </p>
+                        <button className="btn-primary start-checkin-btn" onClick={() => setShowCheckIn(true)}>
+                            START YOUR DAILY CHECK-IN
+                        </button>
+                    </div>
+                    <div className="radial-progress-container" onClick={() => setShowCheckIn(true)}>
+                        <svg viewBox="0 0 100 100" className="radial-progress">
+                            <circle cx="50" cy="50" r="45" className="bg" />
+                            <circle cx="50" cy="50" r="45" className="fg" style={{ strokeDasharray: '282', strokeDashoffset }} />
+                        </svg>
+                        <div className="progress-content">
+                            <span className="value">{animatedScore}%</span>
+                            <span className="label">READY</span>
+                        </div>
+                        {readinessData.lastUpdated !== todayStr && (
+                            <div className="checkin-badge">TAP TO CHECK IN</div>
+                        )}
+                    </div>
+                    <p className="text-muted" style={{ maxWidth: '80%', margin: '0 auto', lineHeight: '1.5' }}>
+                        {score >= 80 ? "Your baseline strength and recovery are optimal for high-intensity today." :
+                            score >= 50 ? "Moderate readiness. Focus on technical quality and controlled intensity." :
+                                "Recovery priority. Consider a mobility session or active rest today."}
                     </p>
                 </div>
 
-                <div className="hero-bottom-highlight">
-                    <p className="hero-subtitle text-emerald">YOUR PREPARATION. OPTIMIZED.</p>
+                <div className="stats-card glass">
+                    <div className="stats-grid">
+                        <div className="stat-item">
+                            <span className="label">SLEEP</span>
+                            <span className="val">{readinessData.lastInputs?.sleepHrs || 0} <span className="unit">hr</span></span>
+                        </div>
+                        <div className="stat-item">
+                            <span className="label">ENERGY</span>
+                            <span className="val">{readinessData.lastInputs?.energy || 0}<span className="unit">/5</span></span>
+                        </div>
+                        <div className="stat-item">
+                            <span className="label">RECOVERY</span>
+                            <span className="val">{readinessData.lastInputs?.freshness || 0}<span className="unit">/5</span></span>
+                        </div>
+                        <div className="stat-item">
+                            <span className="label">STRESS</span>
+                            <span className="val">{readinessData.lastInputs?.stress || 0}<span className="unit">/5</span></span>
+                        </div>
+                    </div>
                 </div>
-            </section>
+
+                <div className="dashboard-sections">
+                    {readinessData.lastUpdated === todayStr && (
+                        <section className="suggestions-section">
+                            <div className="section-header">
+                                <div>
+                                    <h3 className="section-title">Activities suggested for you</h3>
+                                    <p className="section-subtitle text-muted">Based on your daily readiness and weekly trend</p>
+                                </div>
+                            </div>
+                            <div className="suggestion-cards">
+                                {suggestions.map((s, i) => (
+                                    <div
+                                        key={i}
+                                        className="suggestion-item animate-in clickable"
+                                        style={{ animationDelay: `${i * 0.1}s` }}
+                                        onClick={() => setSelectedWorkout(s)}
+                                    >
+                                        <div className="suggestion-meta">
+                                            <span className="tag text-emerald">{s.category}</span>
+                                            <span className="reason text-muted">{s.reason}</span>
+                                        </div>
+                                        <div className="suggestion-content">
+                                            <span className="title">{s.title}</span>
+                                            <div className="activity-icon emerald-bg mini">
+                                                <svg viewBox="0 0 24 24" width="14" height="14" fill="black">
+                                                    <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    )}
+
+                    <section className="daily-progress">
+                        <div className="section-header">
+                            <h3 className="section-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                My Daily Activities log
+                                <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: '500' }}>({todayWorkouts.length})</span>
+                            </h3>
+                            <span className="date-badge glass">{formattedDate}</span>
+                        </div>
+                        <div className="activity-list">
+                            {todayWorkouts.length > 0 && !todayWorkouts[0].completed && (
+                                <div className="onboarding-hint">
+                                    <svg viewBox="0 0 24 24" width="22" height="22" fill="var(--emerald)">
+                                        <path d="M11 5v11.17l-4.88-4.88c-.39-.39-1.03-.39-1.42 0s-.39 1.03 0 1.42l6.59 6.59c.39.39 1.02.39 1.41 0l6.59-6.59c.39-.39.39-1.02 0-1.41s-1.02-.39-1.41 0L13 16.17V5c0-.55-.45-1-1-1s-1 .45-1 1z" />
+                                    </svg>
+                                    <span className="hint-text">Mark your activity as complete here</span>
+                                </div>
+                            )}
+                            {todayWorkouts.length > 0 ? todayWorkouts.map(workout => (
+                                <div key={workout.id} className="activity-item">
+                                    <div
+                                        className={`activity-icon status-toggle ${workout.completed ? 'emerald-bg' : 'grey-bg'}`}
+                                        onClick={() => toggleWorkoutStatus(workout.id)}
+                                        title={workout.completed ? "Mark as planned" : "Mark as completed"}
+                                    >
+                                        <svg viewBox="0 0 24 24" width="18" height="18" fill={workout.completed ? "black" : "white"}>
+                                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                                        </svg>
+                                    </div>
+                                    <div className="activity-info">
+                                        <span className={`title ${workout.completed ? '' : 'planned'}`}>{workout.title}</span>
+                                        <span className="category text-muted">{workout.category}</span>
+                                    </div>
+                                    <div className="activity-meta">
+                                        <span className="time">{workout.time}</span>
+                                        <button
+                                            className={`delete-btn ${deletingId === workout.id ? 'confirming' : ''}`}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                if (deletingId === workout.id) {
+                                                    deleteWorkout(workout.id);
+                                                    setDeletingId(null);
+                                                } else {
+                                                    setDeletingId(workout.id);
+                                                    // Reset after 3 seconds if not confirmed
+                                                    setTimeout(() => setDeletingId(null), 3000);
+                                                }
+                                            }}
+                                            title={deletingId === workout.id ? "Click again to delete" : "Delete activity"}
+                                        >
+                                            {deletingId === workout.id ? (
+                                                <span className="confirm-text">CONFIRM?</span>
+                                            ) : (
+                                                <svg viewBox="0 0 24 24" width="16" height="16" fill="var(--text-secondary)">
+                                                    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                                                </svg>
+                                            )}
+                                        </button>
+                                    </div>
+                                </div>
+                            )) : (
+                                <p className="text-muted empty-state">No activities completed today yet.</p>
+                            )}
+                            <div className="add-activity-container" style={{ marginTop: '16px' }}>
+                                {!isPickerOpen ? (
+                                    <button className="browse-library-btn glass" style={{ width: '100%' }} onClick={() => setIsPickerOpen(true)}>
+                                        + ADD FROM LIBRARY
+                                    </button>
+                                ) : (
+                                    <div className="library-picker glass animate-in" style={{ position: 'relative', marginTop: '8px' }}>
+                                        <div className="picker-header">
+                                            <input
+                                                type="text"
+                                                placeholder="Search library..."
+                                                value={pickerSearch}
+                                                onChange={(e) => setPickerSearch(e.target.value)}
+                                                autoFocus
+                                            />
+                                            <button className="close-picker" onClick={() => setIsPickerOpen(false)}>×</button>
+                                        </div>
+                                        <div className="picker-results scrollable" style={{ maxHeight: '200px' }}>
+                                            {filteredLibrary.map((w, idx) => (
+                                                <div key={idx} className="picker-item" onClick={() => addWorkoutFromLibrary(w)}>
+                                                    <span className="item-title">{w.title}</span>
+                                                    <span className="item-cat">{w.category}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                            {savedDays.includes(todayStr) ? (
+                                <button
+                                    className={`btn-primary ${confirmUnsaveDay ? 'confirming' : ''}`}
+                                    style={{
+                                        marginTop: '16px',
+                                        width: '100%',
+                                        backgroundColor: confirmUnsaveDay ? 'var(--alert-red)' : 'transparent',
+                                        color: confirmUnsaveDay ? 'white' : 'var(--text-secondary)',
+                                        border: confirmUnsaveDay ? 'none' : '1px solid var(--border-color)',
+                                        transition: 'all 0.2s ease'
+                                    }}
+                                    onClick={() => {
+                                        if (confirmUnsaveDay) {
+                                            unsaveDay();
+                                            setConfirmUnsaveDay(false);
+                                        } else {
+                                            setConfirmUnsaveDay(true);
+                                            // Reset confirmation after 3 seconds
+                                            setTimeout(() => setConfirmUnsaveDay(false), 3000);
+                                        }
+                                    }}
+                                >
+                                    {confirmUnsaveDay ? "CONFIRM UNSAVE?" : "UNSAVE DAY TO EDIT"}
+                                </button>
+                            ) : (
+                                <button
+                                    className={`btn-primary ${confirmSaveDay ? 'confirming' : ''}`}
+                                    style={{
+                                        marginTop: '16px',
+                                        width: '100%',
+                                        backgroundColor: confirmSaveDay ? 'var(--alert-red)' : 'var(--emerald)',
+                                        color: 'black',
+                                        transition: 'all 0.2s ease'
+                                    }}
+                                    onClick={() => {
+                                        if (confirmSaveDay) {
+                                            saveDay();
+                                            setConfirmSaveDay(false);
+                                        } else {
+                                            setConfirmSaveDay(true);
+                                            // Reset confirmation after 3 seconds
+                                            setTimeout(() => setConfirmSaveDay(false), 3000);
+                                        }
+                                    }}
+                                >
+                                    {confirmSaveDay ? "CONFIRM SAVE?" : "SAVE MY DAY"}
+                                </button>
+                            )}
+                        </div>
+                    </section>
+
+
+                </div>
+            </div>
 
             {showCheckIn && (
                 <ReadinessCheck
@@ -200,6 +432,13 @@ const Dashboard = () => {
                             </div>
                         )}
 
+                        {selectedWorkout.calisthenicsAlternative && (
+                            <div className="technique-box calisthenics-box" style={{ marginTop: '12px' }}>
+                                <span className="label text-emerald">CALISTHENICS OR NO GYM ALTERNATIVE:</span>
+                                <p>{selectedWorkout.calisthenicsAlternative}</p>
+                            </div>
+                        )}
+
                         <div className="modal-actions">
                             <button className="btn-secondary" onClick={() => setSelectedWorkout(null)}>CANCEL</button>
                             <button className="btn-primary" onClick={() => handleLogSuggested(selectedWorkout)}>
@@ -209,237 +448,7 @@ const Dashboard = () => {
                     </div>
                 </div>
             )}
-
-            <div className={`readiness-section ${getZoneClass()}`}>
-                <div className="readiness-text">
-                    <h2>DAILY READINESS</h2>
-                    <p className="text-muted" style={{ fontSize: '0.85rem', maxWidth: '90%', margin: '0 auto 16px auto', lineHeight: '1.4' }}>
-                        Your Daily Readiness score combines various factors including your sleep, recovery, energy, stress inputs etc to estimate how prepared your body is to train today.
-                    </p>
-                    <button className="btn-primary start-checkin-btn" onClick={() => setShowCheckIn(true)}>
-                        START YOUR DAILY CHECK-IN
-                    </button>
-                </div>
-                <div className="radial-progress-container" onClick={() => setShowCheckIn(true)}>
-                    <svg viewBox="0 0 100 100" className="radial-progress">
-                        <circle cx="50" cy="50" r="45" className="bg" />
-                        <circle cx="50" cy="50" r="45" className="fg" style={{ strokeDasharray: '282', strokeDashoffset }} />
-                    </svg>
-                    <div className="progress-content">
-                        <span className="value">{animatedScore}%</span>
-                        <span className="label">READY</span>
-                    </div>
-                    {readinessData.lastUpdated !== todayStr && (
-                        <div className="checkin-badge">TAP TO CHECK IN</div>
-                    )}
-                </div>
-                <p className="text-muted" style={{ maxWidth: '80%', margin: '0 auto', lineHeight: '1.5' }}>
-                    {score >= 80 ? "Your baseline strength and recovery are optimal for high-intensity today." :
-                        score >= 50 ? "Moderate readiness. Focus on technical quality and controlled intensity." :
-                            "Recovery priority. Consider a mobility session or active rest today."}
-                </p>
-            </div>
-
-            <div className="stats-card glass">
-                <div className="stats-grid">
-                    <div className="stat-item">
-                        <span className="label">SLEEP</span>
-                        <span className="val">{readinessData.lastInputs?.sleepHrs || 0} <span className="unit">hr</span></span>
-                    </div>
-                    <div className="stat-item">
-                        <span className="label">ENERGY</span>
-                        <span className="val">{readinessData.lastInputs?.energy || 0}<span className="unit">/5</span></span>
-                    </div>
-                    <div className="stat-item">
-                        <span className="label">RECOVERY</span>
-                        <span className="val">{readinessData.lastInputs?.freshness || 0}<span className="unit">/5</span></span>
-                    </div>
-                    <div className="stat-item">
-                        <span className="label">STRESS</span>
-                        <span className="val">{readinessData.lastInputs?.stress || 0}<span className="unit">/5</span></span>
-                    </div>
-                </div>
-            </div>
-
-            <div className="dashboard-sections">
-                {readinessData.lastUpdated === todayStr && (
-                    <section className="suggestions-section">
-                        <div className="section-header">
-                            <div>
-                                <h3 className="section-title">Activities suggested for you</h3>
-                                <p className="section-subtitle text-muted">Based on your daily readiness and weekly trend</p>
-                            </div>
-                        </div>
-                        <div className="suggestion-cards">
-                            {suggestions.map((s, i) => (
-                                <div
-                                    key={i}
-                                    className="suggestion-item animate-in clickable"
-                                    style={{ animationDelay: `${i * 0.1}s` }}
-                                    onClick={() => setSelectedWorkout(s)}
-                                >
-                                    <div className="suggestion-meta">
-                                        <span className="tag text-emerald">{s.category}</span>
-                                        <span className="reason text-muted">{s.reason}</span>
-                                    </div>
-                                    <div className="suggestion-content">
-                                        <span className="title">{s.title}</span>
-                                        <div className="activity-icon emerald-bg mini">
-                                            <svg viewBox="0 0 24 24" width="14" height="14" fill="black">
-                                                <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
-                                            </svg>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </section>
-                )}
-
-                <section className="daily-progress">
-                    <div className="section-header">
-                        <h3 className="section-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            My Daily Activities log
-                            <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: '500' }}>({todayWorkouts.length})</span>
-                        </h3>
-                        <span className="date-badge glass">{formattedDate}</span>
-                    </div>
-                    <div className="activity-list">
-                        {todayWorkouts.length > 0 && !todayWorkouts[0].completed && (
-                            <div className="onboarding-hint">
-                                <svg viewBox="0 0 24 24" width="22" height="22" fill="var(--emerald)">
-                                    <path d="M11 5v11.17l-4.88-4.88c-.39-.39-1.03-.39-1.42 0s-.39 1.03 0 1.42l6.59 6.59c.39.39 1.02.39 1.41 0l6.59-6.59c.39-.39.39-1.02 0-1.41s-1.02-.39-1.41 0L13 16.17V5c0-.55-.45-1-1-1s-1 .45-1 1z" />
-                                </svg>
-                                <span className="hint-text">Mark your activity as complete here</span>
-                            </div>
-                        )}
-                        {todayWorkouts.length > 0 ? todayWorkouts.map(workout => (
-                            <div key={workout.id} className="activity-item">
-                                <div
-                                    className={`activity-icon status-toggle ${workout.completed ? 'emerald-bg' : 'grey-bg'}`}
-                                    onClick={() => toggleWorkoutStatus(workout.id)}
-                                    title={workout.completed ? "Mark as planned" : "Mark as completed"}
-                                >
-                                    <svg viewBox="0 0 24 24" width="18" height="18" fill={workout.completed ? "black" : "white"}>
-                                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-                                    </svg>
-                                </div>
-                                <div className="activity-info">
-                                    <span className={`title ${workout.completed ? '' : 'planned'}`}>{workout.title}</span>
-                                    <span className="category text-muted">{workout.category}</span>
-                                </div>
-                                <div className="activity-meta">
-                                    <span className="time">{workout.time}</span>
-                                    <button
-                                        className={`delete-btn ${deletingId === workout.id ? 'confirming' : ''}`}
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            if (deletingId === workout.id) {
-                                                deleteWorkout(workout.id);
-                                                setDeletingId(null);
-                                            } else {
-                                                setDeletingId(workout.id);
-                                                // Reset after 3 seconds if not confirmed
-                                                setTimeout(() => setDeletingId(null), 3000);
-                                            }
-                                        }}
-                                        title={deletingId === workout.id ? "Click again to delete" : "Delete activity"}
-                                    >
-                                        {deletingId === workout.id ? (
-                                            <span className="confirm-text">CONFIRM?</span>
-                                        ) : (
-                                            <svg viewBox="0 0 24 24" width="16" height="16" fill="var(--text-secondary)">
-                                                <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
-                                            </svg>
-                                        )}
-                                    </button>
-                                </div>
-                            </div>
-                        )) : (
-                            <p className="text-muted empty-state">No activities completed today yet.</p>
-                        )}
-                        <div className="add-activity-container" style={{ marginTop: '16px' }}>
-                            {!isPickerOpen ? (
-                                <button className="browse-library-btn glass" style={{ width: '100%' }} onClick={() => setIsPickerOpen(true)}>
-                                    + ADD FROM LIBRARY
-                                </button>
-                            ) : (
-                                <div className="library-picker glass animate-in" style={{ position: 'relative', marginTop: '8px' }}>
-                                    <div className="picker-header">
-                                        <input
-                                            type="text"
-                                            placeholder="Search library..."
-                                            value={pickerSearch}
-                                            onChange={(e) => setPickerSearch(e.target.value)}
-                                            autoFocus
-                                        />
-                                        <button className="close-picker" onClick={() => setIsPickerOpen(false)}>×</button>
-                                    </div>
-                                    <div className="picker-results scrollable" style={{ maxHeight: '200px' }}>
-                                        {filteredLibrary.map((w, idx) => (
-                                            <div key={idx} className="picker-item" onClick={() => addWorkoutFromLibrary(w)}>
-                                                <span className="item-title">{w.title}</span>
-                                                <span className="item-cat">{w.category}</span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                        {savedDays.includes(todayStr) ? (
-                            <button
-                                className={`btn-primary ${confirmUnsaveDay ? 'confirming' : ''}`}
-                                style={{
-                                    marginTop: '16px',
-                                    width: '100%',
-                                    backgroundColor: confirmUnsaveDay ? 'var(--alert-red)' : 'transparent',
-                                    color: confirmUnsaveDay ? 'white' : 'var(--text-secondary)',
-                                    border: confirmUnsaveDay ? 'none' : '1px solid var(--border-color)',
-                                    transition: 'all 0.2s ease'
-                                }}
-                                onClick={() => {
-                                    if (confirmUnsaveDay) {
-                                        unsaveDay();
-                                        setConfirmUnsaveDay(false);
-                                    } else {
-                                        setConfirmUnsaveDay(true);
-                                        // Reset confirmation after 3 seconds
-                                        setTimeout(() => setConfirmUnsaveDay(false), 3000);
-                                    }
-                                }}
-                            >
-                                {confirmUnsaveDay ? "CONFIRM UNSAVE?" : "UNSAVE DAY TO EDIT"}
-                            </button>
-                        ) : (
-                            <button
-                                className={`btn-primary ${confirmSaveDay ? 'confirming' : ''}`}
-                                style={{
-                                    marginTop: '16px',
-                                    width: '100%',
-                                    backgroundColor: confirmSaveDay ? 'var(--alert-red)' : 'var(--emerald)',
-                                    color: 'black',
-                                    transition: 'all 0.2s ease'
-                                }}
-                                onClick={() => {
-                                    if (confirmSaveDay) {
-                                        saveDay();
-                                        setConfirmSaveDay(false);
-                                    } else {
-                                        setConfirmSaveDay(true);
-                                        // Reset confirmation after 3 seconds
-                                        setTimeout(() => setConfirmSaveDay(false), 3000);
-                                    }
-                                }}
-                            >
-                                {confirmSaveDay ? "CONFIRM SAVE?" : "SAVE MY DAY"}
-                            </button>
-                        )}
-                    </div>
-                </section>
-
-
-            </div>
-        </div>
+        </>
     );
 };
 
