@@ -1,19 +1,19 @@
 .coach-page {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 170px);
-    /* Adjust for header and nav */
+    flex: 1;
     position: relative;
-    padding-top: 20px;
+    padding-top: 10px;
 }
 
 .chat-container {
     flex: 1;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    /* Ensures smooth iOS scrolling */
     display: flex;
     flex-direction: column;
     gap: 16px;
-    padding-bottom: 20px;
     scrollbar-width: none;
 }
 
@@ -40,6 +40,7 @@
     border-radius: 18px;
     font-size: 0.95rem;
     line-height: 1.4;
+    white-space: pre-wrap;
 }
 
 .message-bubble.user {
@@ -57,16 +58,17 @@
 }
 
 .chat-input-area {
-    position: absolute;
-    bottom: -20px;
-    left: 0;
-    right: 0;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     padding: 12px 16px;
     border-radius: 20px;
     gap: 12px;
-    background: rgba(20, 20, 20, 0.9);
+    background: rgba(20, 20, 20, 0.95);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--glass-border);
+    margin-top: 4px;
 }
 
 .chat-input-area input {
@@ -131,4 +133,70 @@
     40% {
         transform: scale(1.0);
     }
+}
+
+/* Markdown Specifics */
+.message-bubble table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+    font-size: 0.9em;
+}
+
+.message-bubble th,
+.message-bubble td {
+    padding: 8px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: left;
+}
+
+.message-bubble th {
+    background-color: rgba(255, 255, 255, 0.05);
+    font-weight: 600;
+}
+
+.message-bubble.user th,
+.message-bubble.user td {
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+.message-bubble.user th {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.message-bubble p {
+    margin-bottom: 8px;
+}
+
+.message-bubble p:last-child {
+    margin-bottom: 0;
+}
+
+.message-bubble ul,
+.message-bubble ol {
+    margin-top: 4px;
+    margin-bottom: 8px;
+    padding-left: 20px;
+}
+
+/* Download PDF Button */
+.download-pdf-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+    cursor: pointer;
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    padding: 6px 12px;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+}
+
+.download-pdf-btn:hover {
+    color: var(--emerald);
+    border-color: var(--emerald);
+    background: rgba(0, 255, 128, 0.05);
 }

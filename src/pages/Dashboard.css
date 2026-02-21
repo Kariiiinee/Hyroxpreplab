@@ -5,6 +5,170 @@
     padding-top: 20px;
 }
 
+/* Dashboard Hero Redesign */
+.dashboard-hero {
+    position: relative;
+    padding: 32px 24px 24px;
+    border-radius: 28px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background: linear-gradient(160deg, rgba(15, 20, 18, 0.95) 0%, rgba(10, 10, 10, 0.95) 100%);
+    border: 1px solid rgba(80, 200, 120, 0.15);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    overflow: hidden;
+}
+
+.dashboard-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 120px;
+    background: radial-gradient(ellipse at top left, rgba(80, 200, 120, 0.15) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(80, 200, 120, 0.1);
+    color: var(--emerald);
+    padding: 6px 12px;
+    border-radius: 100px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    width: max-content;
+    border: 1px solid rgba(80, 200, 120, 0.2);
+}
+
+.hero-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.15;
+    margin: 0;
+    letter-spacing: -0.02em;
+}
+
+.text-gradient {
+    background: linear-gradient(135deg, #fff 0%, var(--emerald) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero-image-container {
+    width: 100%;
+    margin: 8px 0 0;
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    max-height: 220px;
+    border: 1px solid rgba(80, 200, 120, 0.25);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+}
+
+.hero-image-container::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 60%, rgba(10, 10, 10, 0.95) 100%);
+    pointer-events: none;
+}
+
+.hero-image {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    object-position: center;
+    transform: scale(1.12);
+    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dashboard-hero:hover .hero-image {
+    transform: scale(1.15);
+}
+
+.hero-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.hero-challenge {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.text-primary {
+    color: var(--text-primary);
+}
+
+.hero-solution.glass-panel {
+    background: rgba(255, 255, 255, 0.03);
+    border-left: 3px solid var(--emerald);
+    padding: 16px;
+    border-radius: 0 12px 12px 0;
+    margin: 4px 0;
+}
+
+.hero-solution p {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.hero-benefits {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 4px;
+}
+
+.benefit-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.05);
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.hero-footer-text {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin: 4px 0 0 0;
+    font-style: italic;
+}
+
+.hero-bottom-highlight {
+    margin-top: 8px;
+    padding-top: 20px;
+    border-top: 1px dashed rgba(255, 255, 255, 0.1);
+    text-align: center;
+}
+
+.hero-subtitle {
+    font-size: 0.9rem;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    margin: 0;
+}
+
 .readiness-section {
     display: flex;
     flex-direction: column;
@@ -315,13 +479,23 @@
 }
 
 .section-title {
-    font-size: 0.85rem;
-    font-weight: 800;
-    color: var(--emerald);
-    /* User request: emerald green */
-    letter-spacing: 0.15em;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
     margin-bottom: 0;
-    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.section-title::before {
+    content: '';
+    display: inline-block;
+    width: 4px;
+    height: 18px;
+    background: var(--emerald);
+    border-radius: 4px;
 }
 
 .section-subtitle {
@@ -550,6 +724,48 @@
 
     to {
         opacity: 1;
-        transform: translateY(0);
+        transform: none;
+    }
+}
+
+/* Mobile Responsiveness for Dashboard Hero */
+@media (max-width: 480px) {
+    .dashboard-hero {
+        padding: 24px 20px 20px;
+        border-radius: 20px;
+        gap: 16px;
+    }
+
+    .hero-title {
+        font-size: 1.1rem;
+    }
+
+    .hero-challenge {
+        font-size: 0.9rem;
+    }
+
+    .hero-solution.glass-panel {
+        padding: 12px;
+        font-size: 0.85rem;
+    }
+
+    .hero-benefits {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .benefit-item {
+        font-size: 0.75rem;
+        padding: 8px 10px;
+        justify-content: flex-start;
+    }
+
+    .hero-badge {
+        font-size: 0.65rem;
+        padding: 4px 10px;
+    }
+
+    .hero-subtitle {
+        font-size: 0.8rem;
     }
 }

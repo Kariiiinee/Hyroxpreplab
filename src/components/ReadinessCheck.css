@@ -4,9 +4,9 @@
     background: rgba(0, 0, 0, 0.85);
     backdrop-filter: blur(8px);
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: center;
-    padding-top: 40px;
+    padding: 20px;
     z-index: 1000;
 }
 

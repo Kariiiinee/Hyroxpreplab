@@ -1,4 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import html2pdf from 'html2pdf.js';
 import { getCoachResponse } from '../services/geminiService';
 import './Coach.css';
 
@@ -19,6 +22,58 @@ const Coach = () => {
     useEffect(() => {
         scrollToBottom();
     }, [messages]);
+
+    const handleDownloadPdf = (index) => {
+        const element = document.getElementById(`message-content-${index}`);
+        if (!element) return;
+
+        // Create an off-screen container for clean PDF rendering (white background)
+        const printContainer = document.createElement('div');
+        printContainer.style.padding = '40px';
+        printContainer.style.fontFamily = 'system-ui, -apple-system, sans-serif';
+        printContainer.style.color = '#111';
+        printContainer.style.background = '#fff';
+
+        // Add Header
+        const header = document.createElement('div');
+        header.innerHTML = `
+            <h1 style="color: #000; margin-bottom: 5px;">HYROX PREPLAB</h1>
+            <h3 style="color: #666; margin-top: 0; margin-bottom: 20px;">AI Coach Session</h3>
+            <hr style="border: none; border-top: 1px solid #ddd; margin-bottom: 30px;" />
+        `;
+
+        // Add Content (clone ReactMarkdown node)
+        const contentClone = element.cloneNode(true);
+        // We ensure text is dark formatted
+        contentClone.style.color = '#111';
+
+        // Add Footer
+        const footer = document.createElement('div');
+        footer.innerHTML = `
+            <hr style="border: none; border-top: 1px solid #ddd; margin-top: 40px; margin-bottom: 20px;" />
+            <p style="color: #888; font-size: 0.85rem; text-align: center;">
+                &copy; ${new Date().getFullYear()} HyroxPrepLab. All rights reserved. <br/>
+                <span style="font-size: 0.75rem;">This is AI-generated guidance. Always consult a professional for medical or specific training advice.</span>
+            </p>
+        `;
+
+        printContainer.appendChild(header);
+        printContainer.appendChild(contentClone);
+        printContainer.appendChild(footer);
+
+        const options = {
+            margin: 0,
+            filename: `HyroxPrepLab-Coach-${new Date().toISOString().split('T')[0]}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+        };
+
+        // Use the built-in save method, but add a tiny delay to ensure the DOM is ready
+        setTimeout(() => {
+            html2pdf().from(printContainer).set(options).save();
+        }, 100);
+    };
 
     const handleSend = async () => {
         if (!input.trim()) return;
@@ -45,7 +100,23 @@ const Coach = () => {
                 {messages.map((m, i) => (
                     <div key={i} className={`message-wrapper ${m.role}`}>
                         <div className={`message-bubble glass ${m.role}`}>
-                            {m.content}
+                            <div id={`message-content-${i}`} className="markdown-content">
+                                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                    {m.content}
+                                </ReactMarkdown>
+                            </div>
+                            {m.role === 'assistant' && i > 0 && (
+                                <button
+                                    onClick={() => handleDownloadPdf(i)}
+                                    className="download-pdf-btn"
+                                    title="Download Response as PDF"
+                                >
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                                        <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
+                                    </svg>
+                                    Download PDF
+                                </button>
+                            )}
                         </div>
                     </div>
                 ))}

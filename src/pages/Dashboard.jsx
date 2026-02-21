@@ -3,6 +3,7 @@ import { useWorkouts } from '../context/WorkoutsContext';
 import ReadinessCheck from '../components/ReadinessCheck';
 import { WORKOUT_DATA } from '../constants/workouts';
 import './Dashboard.css';
+import heroImage from '../assets/hero_image.png';
 
 const Dashboard = () => {
     const { completedWorkouts, readinessData, deleteWorkout, weeklyStats, logWorkout, toggleWorkoutStatus, saveDay, unsaveDay, savedDays } = useWorkouts();
@@ -129,6 +130,52 @@ const Dashboard = () => {
 
     return (
         <div className="dashboard-page animate-in">
+            <section className="dashboard-hero animate-in">
+
+                <h1 className="hero-title" style={{ textAlign: 'center' }}>
+                    Training for <span className="text-gradient">HYROX</span>
+                </h1>
+
+                <div className="hero-image-container">
+                    <img src={heroImage} alt="Hyrox Training" className="hero-image" />
+                </div>
+
+                <div className="hero-content">
+                    <p className="hero-challenge">
+                        It's unique because you are trying to build two things that usually fight each other: <strong className="text-primary">massive strength</strong> and <strong className="text-primary">long-distance running endurance</strong>.
+                    </p>
+
+                    <div className="hero-solution glass-panel">
+                        <p>
+                            Stop guessing your training. We give you structured workouts, daily readiness insights, and an AI Coach that adapts to your fitness so every session builds real performance.
+                        </p>
+                    </div>
+
+                    <div className="hero-benefits">
+                        <span className="benefit-item">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="var(--emerald)"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" /></svg>
+                            Train with purpose
+                        </span>
+                        <span className="benefit-item">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="var(--emerald)"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" /></svg>
+                            Recover smarter
+                        </span>
+                        <span className="benefit-item">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="var(--emerald)"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" /></svg>
+                            Show up ready
+                        </span>
+                    </div>
+
+                    <p className="hero-footer-text text-muted">
+                        Your plan evolves with you — so you always know what to do today and why it matters.
+                    </p>
+                </div>
+
+                <div className="hero-bottom-highlight">
+                    <p className="hero-subtitle text-emerald">YOUR PREPARATION. OPTIMIZED.</p>
+                </div>
+            </section>
+
             {showCheckIn && (
                 <ReadinessCheck
                     onComplete={() => setShowCheckIn(false)}
@@ -164,6 +211,15 @@ const Dashboard = () => {
             )}
 
             <div className={`readiness-section ${getZoneClass()}`}>
+                <div className="readiness-text">
+                    <h2>DAILY READINESS</h2>
+                    <p className="text-muted" style={{ fontSize: '0.85rem', maxWidth: '90%', margin: '0 auto 16px auto', lineHeight: '1.4' }}>
+                        Your Daily Readiness score combines various factors including your sleep, recovery, energy, stress inputs etc to estimate how prepared your body is to train today.
+                    </p>
+                    <button className="btn-primary start-checkin-btn" onClick={() => setShowCheckIn(true)}>
+                        START YOUR DAILY CHECK-IN
+                    </button>
+                </div>
                 <div className="radial-progress-container" onClick={() => setShowCheckIn(true)}>
                     <svg viewBox="0 0 100 100" className="radial-progress">
                         <circle cx="50" cy="50" r="45" className="bg" />
@@ -177,76 +233,75 @@ const Dashboard = () => {
                         <div className="checkin-badge">TAP TO CHECK IN</div>
                     )}
                 </div>
-                <div className="readiness-text">
-                    <h2>DAILY READINESS</h2>
-                    <p className="text-muted">
-                        {score >= 80 ? "Your baseline strength and recovery are optimal for high-intensity today." :
-                            score >= 50 ? "Moderate readiness. Focus on technical quality and controlled intensity." :
-                                "Recovery priority. Consider a mobility session or active rest today."}
-                    </p>
-                    <button className="btn-primary start-checkin-btn" onClick={() => setShowCheckIn(true)}>
-                        START DAILY CHECK-IN
-                    </button>
-                </div>
+                <p className="text-muted" style={{ maxWidth: '80%', margin: '0 auto', lineHeight: '1.5' }}>
+                    {score >= 80 ? "Your baseline strength and recovery are optimal for high-intensity today." :
+                        score >= 50 ? "Moderate readiness. Focus on technical quality and controlled intensity." :
+                            "Recovery priority. Consider a mobility session or active rest today."}
+                </p>
             </div>
 
             <div className="stats-card glass">
                 <div className="stats-grid">
                     <div className="stat-item">
                         <span className="label">SLEEP</span>
-                        <span className="val">{readinessData.lastInputs?.sleepHrs || 7.5} <span className="unit">hr</span></span>
+                        <span className="val">{readinessData.lastInputs?.sleepHrs || 0} <span className="unit">hr</span></span>
                     </div>
                     <div className="stat-item">
                         <span className="label">ENERGY</span>
-                        <span className="val">{readinessData.lastInputs?.energy || 3}<span className="unit">/5</span></span>
+                        <span className="val">{readinessData.lastInputs?.energy || 0}<span className="unit">/5</span></span>
                     </div>
                     <div className="stat-item">
                         <span className="label">RECOVERY</span>
-                        <span className="val">{readinessData.lastInputs?.freshness || 3}<span className="unit">/5</span></span>
+                        <span className="val">{readinessData.lastInputs?.freshness || 0}<span className="unit">/5</span></span>
                     </div>
                     <div className="stat-item">
                         <span className="label">STRESS</span>
-                        <span className="val">{readinessData.lastInputs?.stress || 2}<span className="unit">/5</span></span>
+                        <span className="val">{readinessData.lastInputs?.stress || 0}<span className="unit">/5</span></span>
                     </div>
                 </div>
             </div>
 
             <div className="dashboard-sections">
-                <section className="suggestions-section">
-                    <div className="section-header">
-                        <div>
-                            <h3 className="section-title">ACTIVITIES SUGGESTED FOR YOU</h3>
-                            <p className="section-subtitle text-muted">Based on your daily readiness and weekly trend</p>
+                {readinessData.lastUpdated === todayStr && (
+                    <section className="suggestions-section">
+                        <div className="section-header">
+                            <div>
+                                <h3 className="section-title">Activities suggested for you</h3>
+                                <p className="section-subtitle text-muted">Based on your daily readiness and weekly trend</p>
+                            </div>
                         </div>
-                    </div>
-                    <div className="suggestion-cards">
-                        {suggestions.map((s, i) => (
-                            <div
-                                key={i}
-                                className="suggestion-item animate-in clickable"
-                                style={{ animationDelay: `${i * 0.1}s` }}
-                                onClick={() => setSelectedWorkout(s)}
-                            >
-                                <div className="suggestion-meta">
-                                    <span className="tag text-emerald">{s.category}</span>
-                                    <span className="reason text-muted">{s.reason}</span>
-                                </div>
-                                <div className="suggestion-content">
-                                    <span className="title">{s.title}</span>
-                                    <div className="activity-icon emerald-bg mini">
-                                        <svg viewBox="0 0 24 24" width="14" height="14" fill="black">
-                                            <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
-                                        </svg>
+                        <div className="suggestion-cards">
+                            {suggestions.map((s, i) => (
+                                <div
+                                    key={i}
+                                    className="suggestion-item animate-in clickable"
+                                    style={{ animationDelay: `${i * 0.1}s` }}
+                                    onClick={() => setSelectedWorkout(s)}
+                                >
+                                    <div className="suggestion-meta">
+                                        <span className="tag text-emerald">{s.category}</span>
+                                        <span className="reason text-muted">{s.reason}</span>
+                                    </div>
+                                    <div className="suggestion-content">
+                                        <span className="title">{s.title}</span>
+                                        <div className="activity-icon emerald-bg mini">
+                                            <svg viewBox="0 0 24 24" width="14" height="14" fill="black">
+                                                <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
+                                            </svg>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
-                    </div>
-                </section>
+                            ))}
+                        </div>
+                    </section>
+                )}
 
                 <section className="daily-progress">
                     <div className="section-header">
-                        <h3 className="section-title">DAILY ACTIVITIES ({todayWorkouts.length})</h3>
+                        <h3 className="section-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            My Daily Activities log
+                            <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: '500' }}>({todayWorkouts.length})</span>
+                        </h3>
                         <span className="date-badge glass">{formattedDate}</span>
                     </div>
                     <div className="activity-list">
@@ -382,45 +437,7 @@ const Dashboard = () => {
                     </div>
                 </section>
 
-                <section className="weekly-transfer">
-                    <div className="section-header">
-                        <div>
-                            <h3 className="section-title">WEEKLY TREND</h3>
-                            <p className="section-subtitle text-muted">Your hybrid engine is building</p>
-                        </div>
-                    </div>
-                    <div className="transfer-grid glass">
-                        <div className="transfer-item">
-                            <div className="bar-container">
-                                <div className="bar" style={{ height: `${weeklyStats.race}%` }}></div>
-                            </div>
-                            <span className="label">Race</span>
-                        </div>
-                        <div className="transfer-item">
-                            <div className="bar-container">
-                                <div className="bar" style={{ height: `${weeklyStats.strength}%` }}></div>
-                            </div>
-                            <span className="label">Strength</span>
-                        </div>
-                        <div className="transfer-item">
-                            <div className="bar-container">
-                                <div className="bar" style={{ height: `${weeklyStats.endurance}%` }}></div>
-                            </div>
-                            <span className="label">Endurance</span>
-                        </div>
-                        <div className="transfer-item">
-                            <div className="bar-container">
-                                <div className="bar" style={{ height: `${weeklyStats.recovery}%` }}></div>
-                            </div>
-                            <span className="label">Recovery</span>
-                        </div>
-                    </div>
-                    <p className="insight-text text-muted">
-                        {weeklyStats.strength < weeklyStats.endurance ? "Increase strength focus to balance your weekly trend." :
-                            weeklyStats.endurance < 50 ? "Weekly endurance volume is low. Consider a steady run." :
-                                "Your training balance is looking consistent across categories."}
-                    </p>
-                </section>
+
             </div>
         </div>
     );

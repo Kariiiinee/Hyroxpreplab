@@ -4,7 +4,7 @@ import { WORKOUT_DATA } from '../constants/workouts';
 import './Calendar.css';
 
 const Calendar = () => {
-    const { completedWorkouts, readinessData, savedDays = [] } = useWorkouts();
+    const { completedWorkouts, readinessData, savedDays = [], weeklyStats } = useWorkouts();
     const [view, setView] = useState('weekly'); // 'weekly' or 'monthly'
     const [currentDate, setCurrentDate] = useState(new Date());
     const [selectedDay, setSelectedDay] = useState(null);
@@ -367,53 +367,94 @@ const Calendar = () => {
 
             <div className="calendar-content">
                 {view === 'weekly' ? (
-                    <div className="weekly-agenda">
-                        {weekData.map((d) => (
-                            <div key={d.id} className="day-card glass" onClick={() => setSelectedDay(d)}>
-                                <div className="day-info">
-                                    <span className="day-name">{d.day}</span>
-                                    <span className="day-date">{d.date}</span>
-                                </div>
-
-                                <div className="readiness-indicator">
-                                    <div
-                                        className={`readiness-ring ${d.isRestDay ? 'rest-mode' : ''}`}
-                                        style={{ '--progress': d.readiness, '--color': d.isRestDay ? '#E5E7EB' : getReadinessColor(d.readiness) }}
-                                    >
-                                        {!d.isRestDay && <span className="score">{d.readiness}</span>}
-                                    </div>
-                                </div>
-
-                                <div className="day-stats">
-                                    <div className="sessions-count">
-                                        {d.isRestDay ? (
-                                            <span className="count turquoise-text">REST</span>
-                                        ) : (
-                                            <>
-                                                <span className="count">{d.sessions}</span>
-                                                <span className="label">WORKOUTS</span>
-                                            </>
-                                        )}
-                                    </div>
-                                    <div className="balance-bar">
-                                        <div className="bar-bg">
-                                            <div className="bar-fill" style={{ width: `${d.balance * 100}%` }}></div>
-                                        </div>
-                                        <div className="balance-labels">
-                                            <span>S</span>
-                                            <span>E</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="tap-hint">
-                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="var(--text-secondary)">
-                                        <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
-                                    </svg>
+                    <>
+                        <section className="weekly-transfer" style={{ marginBottom: '24px' }}>
+                            <div className="section-header">
+                                <div>
+                                    <h3 className="section-title">Weekly Trend</h3>
+                                    <p className="section-subtitle text-muted">Your hybrid engine is building</p>
                                 </div>
                             </div>
-                        ))}
-                    </div>
+                            <div className="transfer-grid glass">
+                                <div className="transfer-item">
+                                    <div className="bar-container">
+                                        <div className="bar" style={{ height: `${weeklyStats?.race || 0}%` }}></div>
+                                    </div>
+                                    <span className="label">Race</span>
+                                </div>
+                                <div className="transfer-item">
+                                    <div className="bar-container">
+                                        <div className="bar" style={{ height: `${weeklyStats?.strength || 0}%` }}></div>
+                                    </div>
+                                    <span className="label">Strength</span>
+                                </div>
+                                <div className="transfer-item">
+                                    <div className="bar-container">
+                                        <div className="bar" style={{ height: `${weeklyStats?.endurance || 0}%` }}></div>
+                                    </div>
+                                    <span className="label">Endurance</span>
+                                </div>
+                                <div className="transfer-item">
+                                    <div className="bar-container">
+                                        <div className="bar" style={{ height: `${weeklyStats?.recovery || 0}%` }}></div>
+                                    </div>
+                                    <span className="label">Recovery</span>
+                                </div>
+                            </div>
+                            <p className="insight-text text-muted" style={{ marginTop: '12px' }}>
+                                {weeklyStats?.strength < weeklyStats?.endurance ? "Increase strength focus to balance your weekly trend." :
+                                    weeklyStats?.endurance < 50 ? "Weekly endurance volume is low. Consider a steady run." :
+                                        "Your training balance is looking consistent across categories."}
+                            </p>
+                        </section>
+                        <div className="weekly-agenda">
+                            {weekData.map((d) => (
+                                <div key={d.id} className="day-card glass" onClick={() => setSelectedDay(d)}>
+                                    <div className="day-info">
+                                        <span className="day-name">{d.day}</span>
+                                        <span className="day-date">{d.date}</span>
+                                    </div>
+
+                                    <div className="readiness-indicator">
+                                        <div
+                                            className={`readiness-ring ${d.isRestDay ? 'rest-mode' : ''}`}
+                                            style={{ '--progress': d.readiness, '--color': d.isRestDay ? '#E5E7EB' : getReadinessColor(d.readiness) }}
+                                        >
+                                            {!d.isRestDay && <span className="score">{d.readiness}</span>}
+                                        </div>
+                                    </div>
+
+                                    <div className="day-stats">
+                                        <div className="sessions-count">
+                                            {d.isRestDay ? (
+                                                <span className="count turquoise-text">REST</span>
+                                            ) : (
+                                                <>
+                                                    <span className="count">{d.sessions}</span>
+                                                    <span className="label">WORKOUTS</span>
+                                                </>
+                                            )}
+                                        </div>
+                                        <div className="balance-bar">
+                                            <div className="bar-bg">
+                                                <div className="bar-fill" style={{ width: `${d.balance * 100}%` }}></div>
+                                            </div>
+                                            <div className="balance-labels">
+                                                <span>S</span>
+                                                <span>E</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="tap-hint">
+                                        <svg viewBox="0 0 24 24" width="16" height="16" fill="var(--text-secondary)">
+                                            <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </>
                 ) : (
                     <div className="monthly-view animate-in">
                         <div className="month-nav-header">

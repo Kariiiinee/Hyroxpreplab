@@ -1,47 +1,222 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
+// ================================
+// HYROX PREPLAB AI COACH PROMPTS
+// Smart routing + prompt builder
+// ================================
+
+// ---------- 1. SYSTEM INSTRUCTIONS ----------
+const SYSTEM = {
+    FULL: `You are HYROX PREPLAB AI Coach, a world-class HYROX performance expert.
+
+Style:
+- encouraging, elite, precise
+- structured and actionable
+- mobile-friendly but detailed when useful
+
+Focus:
+- hybrid endurance + strength balance
+- race efficiency and fatigue management
+- readiness-based adjustments
+- technique optimization
+
+No medical diagnoses.
+
+Format:
+Use clean, spaced Markdown.
+Use **tables** for daily plans, workouts, or comparative data (e.g., sets/reps).
+Use **lists** for tips or step-by-step instructions.
+
+Structure:
+Key Insight: 
+What To Do: (Use tables/lists here)
+Why It Matters: 
+Coach Tip: `,
+
+    LITE: `You are HYROX PREPLAB AI Coach.
+
+Be motivating and technical.
+Prioritize actionable advice.
+Adapt to readiness and training phase.
+No medical diagnosis.
+
+Format:
+Focus: 
+Do: 
+Tip: `,
+
+    ULTRA: `HYROX AI Coach.
+
+Motivating and action-focused.
+
+Format:
+Focus: 
+Do: 
+Tip: `
+};
+
+// ---------- 2. DEVELOPER PROMPTS ----------
+const DEV = {
+    FULL: ({ readiness, week, session, history, message }) => `HYROX coaching knowledge:
+
+Principles:
+- mimic race flow (run + stations)
+- progressive overload
+- technique saves energy
+
+Program phases:
+1-4 foundation aerobic + movement
+5-8 strength/power heavy sleds explosive work
+9-11 race-specific combined sessions
+12 taper maintain intensity reduce volume
+
+Readiness:
+85+ full intensity optional extra
+60-84 follow plan quality focus
+<60 reduce load ~20% prioritize recovery
+
+Stations:
+ski hips
+push low steps
+pull backward tight rope
+burpee steady rhythm
+row legs first
+carry tight shoulders
+lunges bag high
+wallball break early
+
+User:
+readiness=${readiness ?? "unknown"}
+week=${week ?? "unknown"}
+session=${session ?? "unknown"}
+history=${history ?? "none"}
+question=${message ?? ""}
+
+Provide detailed HYROX coaching guidance.`,
+
+    LITE: ({ readiness, week, session, notes, message }) => `HYROX context:
+
+Phases:
+1-4 base
+5-8 power
+9-11 race
+12 taper
+
+Rules:
+85+ push optional extra
+60-84 planned quality
+<60 reduce or recovery
+
+Station cues:
+ski hips
+push low steps
+pull tight rope
+burpee rhythm
+row legs
+carry shoulders tight
+lunges bag high
+wallball break early
+
+User:
+R=${readiness ?? "?"}
+W=${week ?? "?"}
+S=${session ?? "?"}
+N=${notes ?? "none"}
+Q=${message ?? ""}
+
+Give your coaching guidance.`,
+
+    ULTRA: ({ readiness, week, session }) => `Phase:
+1-4 base | 5-8 power | 9-11 race | 12 taper
+
+Rules:
+85+ push
+60-84 normal
+<60 recover/reduce
+
+User:
+R=${readiness ?? "?"}
+W=${week ?? "?"}
+S=${session ?? "?"}
+
+Provide your coaching guidance.`
+};
+
+// ---------- 3. SMART ROUTING ----------
+function complexityScore(msg = "") {
+    let score = 0;
+    const m = msg.toLowerCase();
+
+    if (m.length > 160) score += 2;
+    if (m.includes("?")) score += 1;
+    if (/\b(plan|program|strategy|explain|why|compare|technique|injury|improve)\b/.test(m)) score += 2;
+    if (/\b(today|status|ready|quick|summary|check)\b/.test(m)) score -= 1;
+
+    return score;
+}
+
+export function choosePromptType(message = "", source = "chat") {
+    // Source-based routing (strong signal)
+    if (source === "notification") return "ULTRA";
+    if (source === "daily_checkin") return "ULTRA";
+    if (source === "plan_builder") return "FULL";
+
+    const lowerMsg = message.toLowerCase().trim();
+    // Re-introduce simple regex guard for true 'ultra' messages like hey/thanks
+    const ultraLiteRegex = /^(hi|hello|hey|thanks|thank you|ok|okay|cool|good|morning|afternoon|evening|ready|let's go)$/;
+    if (lowerMsg.length < 25 && ultraLiteRegex.test(lowerMsg.replace(/[.,!]/g, ''))) {
+        return "ULTRA";
+    }
+
+    // Message complexity routing
+    const score = complexityScore(message);
+
+    if (score >= 3) return "FULL";
+    if (score < 0) return "ULTRA"; // Only extremely penalized messages go to ULTRA
+    return "LITE";
+}
+
+// ---------- 4. BUILD GEMINI PAYLOAD ----------
+export function buildCoachPrompt({
+    message = "",
+    readiness,
+    week,
+    session,
+    history,
+    notes,
+    source = "chat"
+} = {}) {
+    const type = choosePromptType(message, source);
+    const systemInstruction = SYSTEM[type];
+    const developerPrompt = DEV[type]({
+        readiness, week, session, history, notes, message
+    });
+
+    return {
+        type, // useful for logging / analytics
+        systemInstruction: `${systemInstruction}\n\n${developerPrompt}`
+    };
+}
+
 export const getCoachResponse = async (userMessage, history, apiKey) => {
     if (!apiKey) {
         return "I'm ready to coach you, but I need a Gemini API Key to activate my intelligence. Please add `VITE_GEMINI_API_KEY` to your .env file.";
     }
 
     const genAI = new GoogleGenerativeAI(apiKey);
+
+    const promptPayload = buildCoachPrompt({
+        message: userMessage,
+        history: history.length > 1 ? "yes" : "no",
+        source: "chat"
+    });
+
     const model = genAI.getGenerativeModel({
-        model: "gemini-1.5-flash",
-        systemInstruction: `You are the HYROX PREPLAB AI Coach. You are a world-class HYROX expert.
-Use the following knowledge base to guide the user:
-
-## 1. Core Training Principles
-- Specific Adaptation: Training must mimic HYROX race conditions (running between stations).
-- Progressive Overload: Volume and intensity increase over 12 weeks.
-- Form First: Technique on stations reduces 'energy leaks' during the race.
-
-## 2. 12-Week Progression Logic
-- Weeks 1-4 (Foundation): Focus on aerobic base and movement proficiency. Higher reps, lower intensity.
-- Weeks 5-8 (Strength & Power): Focus on heavy sleds and explosive power (Wall Balls, Push Press).
-- Weeks 9-11 (Specificity): Combined sessions (Running + Stations). Simulation of race pace.
-- Week 12 (Taper): Reduced volume, maintaining intensity to maximize freshness.
-
-## 3. Readiness Adjustments
-- High Readiness (85%+): Proceed with prescribed intensity; consider adding a 'bonus' set if feeling powerful.
-- Moderate Readiness (60-84%): stick to the plan; focus on quality over quantity.
-- Low Readiness (<60%): Reduce load by 20%; double the warm-up time; prioritize active recovery or mobility.
-
-## 4. Exercise Technique Highlights (The 8 Stations)
-1. SkiErg: Hip hinge focus; use body weight to pull, not just arms.
-2. Sled Push: Low center of gravity; powerful short steps.
-3. Sled Pull: Use leg power with a backward walk; keep rope tight.
-4. Burpee Broad Jump: Steady rhythm; don't jump too far, save legs for the station.
-5. Rowing: 60% legs; maintain upright posture.
-6. Farmers Carry: Squeeze shoulder blades; short fast steps.
-7. Sandbag Lunges: Keep bag high on shoulders to prevent forward lean.
-8. Wall Balls: Break sets early (before failure); catch ball high.
-
-Keep responses encouraging, elite, technical, precise, concise, and mobile-friendly.`
+        model: "gemini-3-flash-preview",
+        systemInstruction: promptPayload.systemInstruction
     });
 
     try {
-        // Format history for the SDK (roles must be 'user' or 'model')
         const chatHistory = history.slice(1).map(m => ({
             role: m.role === 'assistant' ? 'model' : 'user',
             parts: [{ text: m.content }]
@@ -50,7 +225,7 @@ Keep responses encouraging, elite, technical, precise, concise, and mobile-frien
         const chat = model.startChat({
             history: chatHistory,
             generationConfig: {
-                maxOutputTokens: 500,
+                maxOutputTokens: 2048,
             },
         });
 
