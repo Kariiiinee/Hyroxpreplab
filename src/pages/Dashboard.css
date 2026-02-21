@@ -169,6 +169,37 @@
     margin: 0;
 }
 
+/* Elegant glowing divider */
+.section-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 12px 0;
+    width: 100%;
+}
+
+.divider-line {
+    height: 1px;
+    flex: 1;
+}
+
+.divider-line.left {
+    background: linear-gradient(90deg, transparent, rgba(80, 200, 120, 0.3));
+}
+
+.divider-line.right {
+    background: linear-gradient(270deg, transparent, rgba(80, 200, 120, 0.3));
+}
+
+.divider-glow {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--emerald);
+    box-shadow: 0 0 12px 3px rgba(80, 200, 120, 0.5);
+}
+
 .readiness-section {
     display: flex;
     flex-direction: column;
@@ -186,12 +217,23 @@
 
 .start-checkin-btn {
     margin-top: 16px;
-    padding: 14px 32px;
-    font-size: 0.85rem;
-    font-weight: 800;
-    letter-spacing: 0.12em;
+    padding: 12px 28px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
     border-radius: 100px;
-    /* Pillow shape */
+    background: transparent;
+    color: var(--emerald);
+    border: 1px solid var(--emerald);
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px rgba(80, 200, 120, 0.1);
+    cursor: pointer;
+}
+
+.start-checkin-btn:hover {
+    background: rgba(80, 200, 120, 0.1);
+    box-shadow: 0 0 15px rgba(80, 200, 120, 0.2);
+    transform: translateY(-2px);
 }
 
 .radial-progress-container {

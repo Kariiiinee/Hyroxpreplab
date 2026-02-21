@@ -131,11 +131,7 @@ const Dashboard = () => {
     return (
         <>
             <div className="dashboard-page animate-in">
-                <section className="dashboard-hero animate-in">
-
-                    <h1 className="hero-title" style={{ textAlign: 'center' }}>
-                        Training for <span className="text-gradient">HYROX</span>
-                    </h1>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
 
                     <div className="hero-image-container">
                         <img src={heroImage} alt="Hyrox Training" className="hero-image" />
@@ -143,7 +139,7 @@ const Dashboard = () => {
 
                     <div className="hero-content">
                         <p className="hero-challenge">
-                            It's unique because you are trying to build two things that usually fight each other: <strong className="text-primary">massive strength</strong> and <strong className="text-primary">long-distance running endurance</strong>.
+                            Training for Hyrox is unique because you are trying to build two things that usually fight each other: <strong className="text-primary">massive strength</strong> and <strong className="text-primary">long-distance running endurance</strong>.
                         </p>
 
                         <div className="hero-solution glass-panel">
@@ -172,10 +168,16 @@ const Dashboard = () => {
                         </p>
                     </div>
 
-                    <div className="hero-bottom-highlight">
+                    <div className="hero-bottom-highlight" style={{ borderTop: 'none', textAlign: 'center' }}>
                         <p className="hero-subtitle text-emerald">YOUR PREPARATION. OPTIMIZED.</p>
                     </div>
-                </section>
+                </div>
+
+                <div className="section-divider">
+                    <div className="divider-line left"></div>
+                    <div className="divider-glow"></div>
+                    <div className="divider-line right"></div>
+                </div>
 
                 <div className={`readiness-section ${getZoneClass()}`}>
                     <div className="readiness-text">
@@ -183,7 +185,7 @@ const Dashboard = () => {
                         <p className="text-muted" style={{ fontSize: '0.85rem', maxWidth: '90%', margin: '0 auto 16px auto', lineHeight: '1.4' }}>
                             Your Daily Readiness score combines various factors including your sleep, recovery, energy, stress inputs etc to estimate how prepared your body is to train today.
                         </p>
-                        <button className="btn-primary start-checkin-btn" onClick={() => setShowCheckIn(true)}>
+                        <button className="start-checkin-btn" onClick={() => setShowCheckIn(true)}>
                             START YOUR DAILY CHECK-IN
                         </button>
                     </div>
